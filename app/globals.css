@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --coquette-pink: #FFD6E0;
+  --coquette-pink-dark: #FFB3C1;
+  --coquette-white: #FFF5F7;
+  --coquette-cream: #FFF9FA;
+  --coquette-rose: #E8B4B8;
+  --coquette-shadow: rgba(255, 179, 193, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--coquette-white) 0%, var(--coquette-pink) 100%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--coquette-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--coquette-pink-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--coquette-rose);
+}
+
+/* macOS window glass effect */
+.glass-effect {
+  background: rgba(255, 245, 247, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Prevent text selection on desktop elements */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
