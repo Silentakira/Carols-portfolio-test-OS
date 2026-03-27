@@ -7,6 +7,7 @@ import {
   User,
   Folder,
   Settings,
+  Globe,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -21,6 +22,7 @@ const dockItems: DockItem[] = [
   { id: 'photos', icon: Image, label: 'Photos', isActive: false },
   { id: 'about', icon: User, label: 'About Me', isActive: false },
   { id: 'finder', icon: Folder, label: 'Finder', isActive: false },
+  { id: 'browser', icon: Globe, label: 'Browser', isActive: false },
   { id: 'settings', icon: Settings, label: 'Settings', isActive: false },
 ];
 
@@ -31,13 +33,11 @@ interface DockProps {
 
 export default function Dock({ onDockItemClick, activeWindows }: DockProps) {
   return (
-    <motion.div
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-      className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden md:block"
-    >
+    <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 hidden md:block">
       <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
         className="flex items-end gap-1 px-3 py-2 rounded-2xl glass-effect shadow-coquette-lg"
         whileHover={{ scale: 1.02 }}
       >
@@ -76,6 +76,6 @@ export default function Dock({ onDockItemClick, activeWindows }: DockProps) {
           );
         })}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

@@ -12,12 +12,20 @@ const getCenterPosition = (width: number, height: number): { x: number; y: numbe
 
 const createInitialState = (): Record<string, WindowState> => ({});
 
+// Function to get center position dynamically
+const getDynamicCenterPosition = (width: number, height: number): { x: number; y: number } => {
+  if (typeof window === 'undefined') return { x: 100, y: 100 };
+  const x = Math.max(0, (window.innerWidth - width) / 2);
+  const y = Math.max(28, (window.innerHeight - height) / 2);
+  return { x, y };
+};
+
 export const windowConfigs: Record<string, WindowConfig> = {
   photos: {
     id: 'photos',
     title: 'Photos',
     defaultSize: { width: 900, height: 600 },
-    defaultPosition: getCenterPosition(900, 600),
+    defaultPosition: { x: 0, y: 0 }, // Will be calculated dynamically
     minSize: { width: 400, height: 300 },
     resizable: true,
   },
@@ -25,7 +33,7 @@ export const windowConfigs: Record<string, WindowConfig> = {
     id: 'about',
     title: 'About Me',
     defaultSize: { width: 600, height: 500 },
-    defaultPosition: getCenterPosition(600, 500),
+    defaultPosition: { x: 0, y: 0 }, // Will be calculated dynamically
     minSize: { width: 400, height: 300 },
     resizable: true,
   },
@@ -33,7 +41,7 @@ export const windowConfigs: Record<string, WindowConfig> = {
     id: 'finder',
     title: 'Finder',
     defaultSize: { width: 700, height: 500 },
-    defaultPosition: { x: 50, y: 50 },
+    defaultPosition: { x: 0, y: 0 }, // Will be calculated dynamically
     minSize: { width: 400, height: 300 },
     resizable: true,
   },
@@ -41,8 +49,16 @@ export const windowConfigs: Record<string, WindowConfig> = {
     id: 'settings',
     title: 'Settings',
     defaultSize: { width: 500, height: 400 },
-    defaultPosition: getCenterPosition(500, 400),
+    defaultPosition: { x: 0, y: 0 }, // Will be calculated dynamically
     minSize: { width: 400, height: 300 },
+    resizable: true,
+  },
+  browser: {
+    id: 'browser',
+    title: 'Browser',
+    defaultSize: { width: 1000, height: 700 },
+    defaultPosition: { x: 0, y: 0 }, // Will be calculated dynamically
+    minSize: { width: 600, height: 400 },
     resizable: true,
   },
 };
@@ -66,6 +82,12 @@ function windowReducer(
         };
       }
 
+      // Calculate center position dynamically
+      const centerPos = getDynamicCenterPosition(
+        config?.defaultSize.width || 600,
+        config?.defaultSize.height || 400
+      );
+
       return {
         ...state,
         [id]: {
@@ -74,7 +96,7 @@ function windowReducer(
           isOpen: true,
           isMinimized: false,
           isMaximized: false,
-          position: initialPosition || config?.defaultPosition || getCenterPosition(600, 400),
+          position: initialPosition || centerPos,
           size: config?.defaultSize || { width: 600, height: 400 },
           zIndex: maxZIndex + 1,
         },
@@ -124,14 +146,19 @@ function windowReducer(
         };
       }
 
-      // Restore from maximized
+      // Restore from maximized - recalculate center position
+      const centerPos = getDynamicCenterPosition(
+        config?.defaultSize.width || 600,
+        config?.defaultSize.height || 400
+      );
+
       return {
         ...state,
         [id]: {
           ...state[id],
           isMaximized: false,
           isMinimized: false,
-          position: config?.defaultPosition || getCenterPosition(600, 400),
+          position: centerPos,
           size: config?.defaultSize || { width: 600, height: 400 },
           zIndex: maxZIndex + 1,
         },

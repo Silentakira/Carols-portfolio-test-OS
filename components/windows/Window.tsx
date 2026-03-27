@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, useMotionValue, PanInfo } from 'framer-motion';
 import WindowControls from './WindowControls';
 import type { WindowState } from '@/types/window';
 
@@ -11,6 +11,7 @@ interface WindowProps {
   onMinimize: () => void;
   onMaximize: () => void;
   onFocus: () => void;
+  onPositionChange?: (id: string, position: { x: number; y: number }) => void;
   children: React.ReactNode;
 }
 
@@ -20,22 +21,42 @@ export default function Window({
   onMinimize,
   onMaximize,
   onFocus,
+  onPositionChange,
   children,
 }: WindowProps) {
-  const { isOpen, isMinimized, isMaximized, position, size, zIndex, title } = windowState;
+  const { id, isOpen, isMinimized, isMaximized, position, size, zIndex, title } = windowState;
 
   const windowRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(position.x);
   const y = useMotionValue(position.y);
 
+  // Sync motion values with position state
+  useEffect(() => {
+    x.set(position.x);
+    y.set(position.y);
+  }, [position.x, position.y, x, y]);
+
+  const handleDrag = (_: any, info: PanInfo) => {
+    if (typeof window === 'undefined' || isMaximized) return;
+
+    const newX = Math.max(0, Math.min(window.innerWidth - size.width, position.x + info.delta.x));
+    const newY = Math.max(28, Math.min(window.innerHeight - size.height, position.y + info.delta.y));
+
+    x.set(newX);
+    y.set(newY);
+  };
+
   const handleDragEnd = (_: any, info: PanInfo) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || isMaximized) return;
 
     const newX = Math.max(0, Math.min(window.innerWidth - size.width, position.x + info.offset.x));
     const newY = Math.max(28, Math.min(window.innerHeight - size.height, position.y + info.offset.y));
 
     x.set(newX);
     y.set(newY);
+
+    // Update the state with final position
+    onPositionChange?.(id, { x: newX, y: newY });
   };
 
   if (!isOpen || isMinimized) return null;
@@ -57,6 +78,7 @@ export default function Window({
       drag={!isMaximized}
       dragMomentum={false}
       dragElastic={0}
+      onDrag={handleDrag}
       onDragEnd={handleDragEnd}
       onMouseDown={onFocus}
       onTouchStart={onFocus}

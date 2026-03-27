@@ -11,6 +11,8 @@ import BootScreen from '@/components/desktop/BootScreen';
 import PhotosApp from '@/components/apps/PhotosApp';
 import AboutApp from '@/components/apps/AboutApp';
 import FolderView from '@/components/apps/FolderView';
+import SettingsApp from '@/components/apps/SettingsApp';
+import BrowserApp from '@/components/apps/BrowserApp';
 import { useWindowManager } from '@/lib/windowManager';
 
 export default function Home() {
@@ -24,6 +26,7 @@ export default function Home() {
     maximizeWindow,
     restoreWindow,
     bringToFront,
+    updatePosition,
   } = useWindowManager();
 
   const handleDockItemClick = (id: string, title: string) => {
@@ -71,16 +74,13 @@ export default function Home() {
               onMinimize={() => minimizeWindow(windowState.id)}
               onMaximize={() => maximizeWindow(windowState.id)}
               onFocus={() => bringToFront(windowState.id)}
+              onPositionChange={updatePosition}
             >
               {windowState.id === 'photos' && <PhotosApp />}
               {windowState.id === 'about' && <AboutApp />}
               {windowState.id === 'finder' && <FolderView categoryId="all" />}
-              {windowState.id === 'settings' && (
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold text-coquette-rose mb-4">Settings</h2>
-                  <p className="text-gray-600">Settings panel coming soon...</p>
-                </div>
-              )}
+              {windowState.id === 'settings' && <SettingsApp />}
+              {windowState.id === 'browser' && <BrowserApp />}
             </Window>
           ))}
       </AnimatePresence>
